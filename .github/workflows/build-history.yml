@@ -15,7 +15,7 @@ jobs:
       - name: Check out latest front end
         uses: actions/checkout@v2
         with:
-          repository: kikoeru-project/kikoeru-quasar
+          repository: azuse/kikoeru-quasar
           ref: history
 
       - name: Setup node
