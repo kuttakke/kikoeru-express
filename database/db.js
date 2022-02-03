@@ -460,7 +460,7 @@ const insertHistory = (username, work_id, file_index, file_name, play_time, tota
 
 // 读取某用户的历史数据
 const getHistoryByUsername = async (username, limit = 1000, offset = 0,) => knex.transaction(async(trx) => {
-  history = await trx.raw('SELECT user_name, work_id, file_index, file_name, play_time, total_time, updated_at FROM t_history WHERE user_name = ?;', [username])
+  let history = await trx.raw('SELECT user_name, work_id, file_index, file_name, play_time, total_time, updated_at FROM t_history WHERE user_name = ? LIMIT ? OFFSET ?;', [username, limit, offset])
   
   return history
 })
