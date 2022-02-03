@@ -114,7 +114,7 @@ const createSchema = () => knex.schema
 
 const createTableHistory = () => knex.schema
 .createTable('t_history', (table) => {
-  table.string('id').primary();         
+  table.integer('id').primary();         
   table.string('user_name').notNullable();  // 用户名
   table.string('work_id').notNullable();    // 作品id
   table.string('file_index').notNullable(); // 音频index
@@ -124,7 +124,7 @@ const createTableHistory = () => knex.schema
   table.timestamps(true, true);             // 时间戳created_at, updated_at
   table.foreign('user_name').references('name').inTable('t_user').onDelete('CASCADE'); // FOREIGN KEY 
   table.foreign('work_id').references('id').inTable('t_work').onDelete('CASCADE'); // FOREIGN KEY 
-  table.primary(['user_name', 'work_id', 'file_index']);  // PRIMARY KEY
+  table.unique(['user_name', 'work_id', 'file_index']);  // PRIMARY KEY
 })
 .then(() => {
   console.log(' * 成功构建数据库结构.');
@@ -138,8 +138,6 @@ const createTableHistory = () => knex.schema
 });
 
 const createTableHistoryIfNotExists = () => knex.schema.hasTable('t_history').then(function(exists) {
-  knex.schema.dropTable('t_history');
-  createTableHistory();
   if (!exists) {
     createTableHistory();
   }
