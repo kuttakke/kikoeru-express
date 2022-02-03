@@ -453,10 +453,30 @@ const getMetadata = ({field = 'circle', id} = {}) => {
     .first()
 }
 
+// 插入历史数据
+const insertHistory = (username, work_id, file_index, file_name, play_time, total_time) =>  knex.transaction(async(trx) => {
+    await trx.raw('INSERT OR REPLACE INTO t_history (user_name, work_id, file_index, file_name, play_time, total_time) VALUES (?, ?, ?, ?, ?, ?);', [username, work_id, file_index, file_name, play_time, total_time]);
+});
+
+// 读取某用户的历史数据
+const getHistoryByUsername = async (username, limit = 1000, offset = 0,) => knex.transaction(async(trx) => {
+  history = await trx.raw('SELECT user_name, work_id, file_index, file_name, play_time, total_time, updated_at FROM t_history WHERE user_name = ?;', [username])
+  
+  return history
+})
+
+// 读取某用户 work id, file index的历史数据
+const getHistoryByWorkIdIndex = async (username, work_id, file_index) => knex.transaction(async(trx) => {
+  history = await trx.raw('SELECT user_name, work_id, file_index, file_name, play_time, total_time, updated_at FROM t_history WHERE user_name = ? AND work_id = ? AND file_index = ?;', [username, work_id, file_index]);
+  
+  return history
+})
+
 module.exports = {
   knex, insertWorkMetadata, getWorkMetadata, removeWork, getWorksBy, getWorksByKeyWord, updateWorkMetadata,
   getLabels, getMetadata,
   createUser, updateUserPassword, resetUserPassword, deleteUser,
   getWorksWithReviews, updateUserReview, deleteUserReview,
+  insertHistory, getHistoryByUsername, getHistoryByWorkIdIndex,
   databaseExist
 };
