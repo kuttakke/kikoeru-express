@@ -119,8 +119,8 @@ const createTableHistory = () => knex.schema
   table.string('work_id').notNullable();    // 作品id
   table.string('file_index').notNullable(); // 音频index
   table.string('file_name');                // 播放音频文件名
-  table.string('play_time');                // 播放进度
-  table.string('total_time');               // 总时间
+  table.integer('play_time');               // 播放进度(s)
+  table.integer('total_time');              // 总时间(s)
   table.timestamps(true, true);             // 时间戳created_at, updated_at
   table.foreign('user_name').references('name').inTable('t_user').onDelete('CASCADE'); // FOREIGN KEY 
   table.foreign('work_id').references('id').inTable('t_work').onDelete('CASCADE'); // FOREIGN KEY 
