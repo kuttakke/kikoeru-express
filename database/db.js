@@ -472,11 +472,18 @@ const getHistoryByWorkIdIndex = async (username, work_id, file_index) => knex.tr
   return history
 })
 
+// GROUP BY workid 读取work id最后一条历史记录
+const getHistoryGroupByWorkId = async (username) => knex.transaction(async(trx) => {
+  history = await trx.raw('SELECT user_name, work_id, file_index, file_name, play_time, total_time, updated_at FROM t_history WHERE user_name = ? GROUP BY work_id ORDER BY updated_at DESC', [username])
+
+  return history
+})
+
 module.exports = {
   knex, insertWorkMetadata, getWorkMetadata, removeWork, getWorksBy, getWorksByKeyWord, updateWorkMetadata,
   getLabels, getMetadata,
   createUser, updateUserPassword, resetUserPassword, deleteUser,
   getWorksWithReviews, updateUserReview, deleteUserReview,
-  insertHistory, getHistoryByUsername, getHistoryByWorkIdIndex,
+  insertHistory, getHistoryByUsername, getHistoryByWorkIdIndex, getHistoryGroupByWorkId,
   databaseExist
 };
