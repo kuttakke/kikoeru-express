@@ -474,7 +474,15 @@ const getHistoryByWorkIdIndex = async (username, work_id, file_index) => knex.tr
 
 // GROUP BY workid 读取work id最后一条历史记录
 const getHistoryGroupByWorkId = async (username) => knex.transaction(async(trx) => {
-  history = await trx.raw('SELECT user_name, work_id, file_index, file_name, play_time, total_time, updated_at FROM t_history WHERE user_name = ? GROUP BY work_id ORDER BY updated_at DESC', [username])
+  history = await trx.raw(`
+  WITH tmp_table AS (
+    SELECT * FROM t_history WHERE user_name = ?
+  )
+  SELECT a.*
+  FROM tmp_table a                   
+  LEFT JOIN tmp_table b             
+  ON a.work_id = b.work_id AND a.updated_at < b.updated_at
+  WHERE b.updated_at is NULL GROUP BY a.work_id ORDER BY a.updated_at DESC`, [username])
 
   return history
 })
