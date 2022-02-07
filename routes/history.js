@@ -17,7 +17,6 @@ router.put('/',
   (req, res) => {
     if(!isValidRequest(req, res)) return;
 
-    console.log("hello world")
     // 插入历史记录
     const username = config.auth ? req.user.name : 'admin';
 
