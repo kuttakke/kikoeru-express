@@ -467,14 +467,14 @@ const getHistoryByUsername = async (username, limit = 1000, offset = 0,) => knex
 
 // 读取某用户 work id, file index的历史数据
 const getHistoryByWorkIdIndex = async (username, work_id, file_index) => knex.transaction(async(trx) => {
-  history = await trx.raw('SELECT user_name, work_id, file_index, file_name, play_time, total_time, updated_at FROM t_history WHERE user_name = ? AND work_id = ? AND file_index = ?;', [username, work_id, file_index]);
+  let history = await trx.raw('SELECT user_name, work_id, file_index, file_name, play_time, total_time, updated_at FROM t_history WHERE user_name = ? AND work_id = ? AND file_index = ?;', [username, work_id, file_index]);
   
   return history
 })
 
 // GROUP BY workid 读取work id最后一条历史记录
 const getHistoryGroupByWorkId = async (username) => knex.transaction(async(trx) => {
-  history = await trx.raw(`
+  let history = await trx.raw(`
   WITH tmp_table AS (
     SELECT * FROM t_history WHERE user_name = ?
   )

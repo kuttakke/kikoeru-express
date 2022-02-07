@@ -14,7 +14,7 @@ router.put('/',
   body('file_name').isString(),
   body('play_time'),
   body('total_time'),
-  (req, res, next) => {
+  (req, res) => {
     if(!isValidRequest(req, res)) return;
 
     console.log("hello world")
@@ -41,16 +41,16 @@ router.get('/',
     const username = config.auth ? req.user.name : 'admin';
 
     try {
-      history = await db.getHistoryByUsername(username)
+      let history = await db.getHistoryByUsername(username)
 
       history.map(record => {
         record.work_id = parseInt(record.work_id);
         record.file_index = parseInt(record.file_index);
-        record.file_name = record.file_name;
-        record.play_time = record.play_time;
-        record.total_time = record.total_time;
-        record.updated_at = record.updated_at;
-        record.user_name = record.username;
+        // record.file_name = record.file_name;
+        // record.play_time = record.play_time;
+        // record.total_time = record.total_time;
+        // record.updated_at = record.updated_at;
+        // record.user_name = record.username;
       })
 
       res.send(history)
@@ -70,16 +70,16 @@ router.get('/getByWorkIdIndex',
     const username = config.auth ? req.user.name : 'admin';
 
     try {
-      history = await db.getHistoryByWorkIdIndex(username, req.query.work_id, req.query.file_index)
+      let history = await db.getHistoryByWorkIdIndex(username, req.query.work_id, req.query.file_index)
 
       history.map(record => {
         record.work_id = parseInt(record.work_id);
         record.file_index = parseInt(record.file_index);
-        record.file_name = record.file_name;
-        record.play_time = record.play_time;
-        record.total_time = record.total_time;
-        record.updated_at = record.updated_at;
-        record.user_name = record.username;
+        // record.file_name = record.file_name;
+        // record.play_time = record.play_time;
+        // record.total_time = record.total_time;
+        // record.updated_at = record.updated_at;
+        // record.user_name = record.username;
       })
 
       res.send(history)
@@ -97,16 +97,16 @@ router.get('/recent',
     const username = config.auth ? req.user.name : 'admin';
 
     try {
-      history = await db.getHistoryGroupByWorkId(username)
+      let history = await db.getHistoryGroupByWorkId(username)
 
       history.map(record => {
         record.work_id = parseInt(record.work_id);
         record.file_index = parseInt(record.file_index);
-        record.file_name = record.file_name;
-        record.play_time = record.play_time;
-        record.total_time = record.total_time;
-        record.updated_at = record.updated_at;
-        record.user_name = record.username;
+        // record.file_name = record.file_name;
+        // record.play_time = record.play_time;
+        // record.total_time = record.total_time;
+        // record.updated_at = record.updated_at;
+        // record.user_name = record.username;
       })
 
       res.send(history)
