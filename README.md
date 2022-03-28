@@ -9,6 +9,7 @@
 * WorkTree现实播放进度
 * Work页面提供续播按钮
 * 制作历史记录Page
+* ~~增加按加入日期排序~~
 ---
 # Kikoeru
 一个同人音声专用的音乐流媒体服务器，详细的使用说明见[**用户文档**](https://github.com/umonaca/kikoeru-express/wiki/%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)
