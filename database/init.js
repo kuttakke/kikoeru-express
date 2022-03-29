@@ -6,7 +6,7 @@ const pjson = require('../package.json');
 const compareVersions = require('compare-versions');
 const { config, updateConfig } = require('../config');
 const { applyFix } = require('../upgrade');
-const { createSchema, createTableHistoryIfNotExists } = require('./schema');
+const { createSchema, createTableHistoryIfNotExists, addInsertTimeToTableWorkIfNotExists } = require('./schema');
 
 const initApp = async () => {
   let configVersion = config.version;
@@ -80,6 +80,7 @@ const initApp = async () => {
   }
 
   createTableHistoryIfNotExists();
+  addInsertTimeToTableWorkIfNotExists();
 }
 
 module.exports = { initApp };
