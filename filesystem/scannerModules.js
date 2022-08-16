@@ -6,7 +6,7 @@ const axios = require('../scraper/axios.js'); // 数据请求
 const { scrapeWorkMetadataFromDLsite, scrapeDynamicWorkMetadataFromDLsite } = require('../scraper/dlsite');
 const db = require('../database/db');
 const { createSchema } = require('../database/schema');
-const { getFolderList, deleteCoverImageFromDisk, saveCoverImageToDisk } = require('./utils');
+const { getFolderList, deleteCoverImageFromDisk, saveCoverImageToDisk, getTrackList } = require('./utils');
 const { md5 } = require('../auth/utils');
 const { nameToUUID } = require('../scraper/utils');
 
@@ -165,6 +165,27 @@ const getMetadata = (id, rootFolderName, dir, tagLanguage) => {
   
   return scrapeWorkMetadataFromDLsite(id, tagLanguage) // 抓取该音声的元数据
     .then((metadata) => {
+      const rootFolder = config.rootFolders.find(rootFolder => rootFolder.name === rootFolderName);
+      const absolutePath = path.join(rootFolder.path, dir);
+      console.log(absolutePath)
+      return getTrackList(id, absolutePath)
+      .then((tracks) => {
+        metadata.hasLrc = false
+        for (let idx in tracks) {
+          const fileLoc = path.join(absolutePath, tracks[idx].subtitle || '', tracks[idx].title);
+          const lrcFileLoc = fileLoc.substr(0, fileLoc.lastIndexOf(".")) + ".lrc";
+
+          console.log(fileLoc)
+          console.log(lrcFileLoc)
+      
+          if (fs.existsSync(lrcFileLoc)) {
+            metadata.hasLrc = true
+          }
+        }
+        return metadata
+      })
+    })
+    .then((metadata) => {
       // 将抓取到的元数据插入到数据库
       console.log(` -> [RJ${rjcode}] 元数据抓取成功，准备添加到数据库...`);
       addLogForTask(rjcode, {
@@ -174,6 +195,8 @@ const getMetadata = (id, rootFolderName, dir, tagLanguage) => {
       
       metadata.rootFolderName = rootFolderName;
       metadata.dir = dir;
+      if (metadata.hasLrc) metadata.tags.push({"id": -1, "name": "中文字幕"})
+
       return db.insertWorkMetadata(metadata)
         .then(() => {
           console.log(` -> [RJ${rjcode}] 元数据成功添加到数据库.`);
@@ -682,4 +705,4 @@ const refreshWorks = async (query, idColumnName, processor) => {
   });
 };
 
-module.exports = { performScan, performUpdate }
+module.exports = { performScan, performUpdate}
