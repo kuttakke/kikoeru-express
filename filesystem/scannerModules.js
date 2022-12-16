@@ -159,7 +159,7 @@ const getMetadata = (id, rootFolderName, dir, tagLanguage) => {
     console.log('folder.id: %s', id)
     // const rjcode = (`000000${folder.id}`).slice(-6); // zero-pad to 6 digits
     const rjcode = id
-    onsole.log('rjcode: %s',rjcode)
+    console.log('rjcode: %s',rjcode)
   console.log(` -> [RJ${rjcode}] 从 DLSite 抓取元数据...`);
   addLogForTask(rjcode, {
     level: 'info',
@@ -297,15 +297,15 @@ const getCoverImage = (id, types) => {
  * @param {string} folder 音声文件夹对象 { relativePath: '相对路径', rootFolderName: '根文件夹别名', id: '音声ID' }
  */
 const processFolder = (folder) => db.knex('t_work')
-  .select('id')
-  .where('id', '=', folder.id)
+.select('id')
+.where('id', '=', folder.id)
   .count()
   .first()
   .then((res) => {
-    console.log('folder.id: %s',id)
+    console.log('folder.id: %s',folder.id)
     // const rjcode = (`000000${folder.id}`).slice(-6); // zero-pad to 6 digits
-    const rjcode = id
-    onsole.log('rjcode: %s',rjcode)
+    const rjcode = folder.id
+    console.log('rjcode: %s',rjcode)
 
     const coverTypes = ['main', 'sam', '240x240'];
     const count = res['count(*)'];
