@@ -156,11 +156,11 @@ const uniqueArr = (arr) => {
  * @param {string} tagLanguage 标签语言，'ja-jp', 'zh-tw' or 'zh-cn'，默认'zh-cn'
  */
 const getMetadata = (id, rootFolderName, dir, tagLanguage) => {
-    console.log('folder.id: %s', id)
+    //console.log('folder.id: %s', id)
     // const rjcode = (`000000${folder.id}`).slice(-6); // zero-pad to 6 digits
     const rjcode = id
-    console.log('rjcode: %s',rjcode)
-  console.log(` -> [RJ${rjcode}] 从 DLSite 抓取元数据...`);
+    //console.log('rjcode: %s',rjcode)
+   console.log(` -> [RJ${rjcode}] 从 DLSite 抓取元数据...`);
   addLogForTask(rjcode, {
     level: 'info',
     message: '从 DLSite 抓取元数据...'
@@ -238,9 +238,12 @@ const getMetadata = (id, rootFolderName, dir, tagLanguage) => {
  * @param {Array} types img types: ['main', 'sam', 'sam@2x', 'sam@3x', '240x240', '360x360']
  */
 const getCoverImage = (id, types) => {
-  const rjcode = (`000000${id}`).slice(-6); // zero-pad to 6 digits
+  //const rjcode = (`000000${id}`).slice(-6); // zero-pad to 6 digits
+  const rjcode = id
   const id2 = (id % 1000 === 0) ? id : parseInt(id / 1000) * 1000 + 1000;
-  const rjcode2 = (`000000${id2}`).slice(-6); // zero-pad to 6 digits
+  //const rjcode2 = (`000000${id2}`).slice(-6); // zero-pad to 6 digits
+  const rjcode2 = id2
+  console.log('rjcode2: %s',rjcode2)
   const promises = [];
   types.forEach(type => {
     let url = `https://img.dlsite.jp/modpub/images2/work/doujin/RJ${rjcode2}/RJ${rjcode}_img_${type}.jpg`;
@@ -302,10 +305,10 @@ const processFolder = (folder) => db.knex('t_work')
   .count()
   .first()
   .then((res) => {
-    console.log('folder.id: %s',folder.id)
+    //console.log('folder.id: %s',folder.id)
     // const rjcode = (`000000${folder.id}`).slice(-6); // zero-pad to 6 digits
     const rjcode = folder.id
-    console.log('rjcode: %s',rjcode)
+    //console.log('rjcode: %s',rjcode)
 
     const coverTypes = ['main', 'sam', '240x240'];
     const count = res['count(*)'];
@@ -374,7 +377,8 @@ const performCleanup = async () => {
     if (!rootFolder || !fs.existsSync(path.join(rootFolder.path, work.dir))) {
       db.removeWork(work.id, trxProvider) // 将其数据项从数据库中移除
         .then((result) => { // 然后删除其封面图片
-          const rjcode = (`000000${work.id}`).slice(-6); // zero-pad to 6 digits
+          //const rjcode = (`000000${work.id}`).slice(-6); // zero-pad to 6 digits
+          const rjcode = folder.id
           deleteCoverImageFromDisk(rjcode)    
             .catch((err) => {
               if (err && err.code !== 'ENOENT') { 
@@ -528,7 +532,8 @@ const performScan = () => {
             const addedFolder = uniqueFolderList.find(folder => folder.id === parseInt(key));
             duplicate[key].push(addedFolder); // 最后一项为将要添加到数据库中的音声文件夹
 
-            const rjcode = (`000000${key}`).slice(-6); // zero-pad to 6 digits
+            //const rjcode = (`000000${key}`).slice(-6); // zero-pad to 6 digits
+            const rjcode = folder.id
             console.log(` -> [RJ${rjcode}] 存在多个文件夹:`);
             addMainLog({
               level: 'info',
@@ -553,7 +558,8 @@ const performScan = () => {
         const promises = uniqueFolderList.map((folder) => 
           processFolderLimited(folder)
             .then((result) => { // 统计处理结果
-              const rjcode = (`000000${folder.id}`).slice(-6); // zero-pad to 6 digits\
+              //const rjcode = (`000000${folder.id}`).slice(-6); // zero-pad to 6 digits\
+              const rjcode = folder.id
               counts[result] += 1;
 
               if (result === 'added') {
@@ -629,7 +635,8 @@ const updateMetadata = (id, options = {}) => {
     scrapeProcessor = () => scrapeWorkMetadataFromDLsite(id, config.tagLanguage);
   }
 
-  const rjcode = (`000000${id}`).slice(-6); // zero-pad to 6 digits
+  //const rjcode = (`000000${id}`).slice(-6); // zero-pad to 6 digits
+  const rjcode = folder.id
   addTask(rjcode); // addTask only accepts a string
   return scrapeProcessor() // 抓取该音声的元数据
     .then((metadata) => {
@@ -692,7 +699,8 @@ const refreshWorks = async (query, idColumnName, processor) => {
 
     const promises = works.map((work) => {
       const workid = work[idColumnName];
-      const rjcode = (`000000${workid}`).slice(-6);
+      //const rjcode = (`000000${workid}`).slice(-6);
+      const rjcode = folder.id
       return processor(workid)
         .then((result) => { // 统计处理结果
           result === 'failed' ? counts['failed'] += 1 : counts['updated'] += 1;
