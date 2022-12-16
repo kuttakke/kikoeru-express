@@ -157,7 +157,7 @@ const uniqueArr = (arr) => {
  */
 const getMetadata = (id, rootFolderName, dir, tagLanguage) => {
     //console.log('folder.id: %s', id)
-    // const rjcode = (`000000${folder.id}`).slice(-6); // zero-pad to 6 digits
+    // const rjcode = (`000000${id}`).slice(-6); // zero-pad to 6 digits
     const rjcode = id
     //console.log('rjcode: %s',rjcode)
    console.log(` -> [RJ${rjcode}] 从 DLSite 抓取元数据...`);
@@ -378,7 +378,7 @@ const performCleanup = async () => {
       db.removeWork(work.id, trxProvider) // 将其数据项从数据库中移除
         .then((result) => { // 然后删除其封面图片
           //const rjcode = (`000000${work.id}`).slice(-6); // zero-pad to 6 digits
-          const rjcode = folder.id
+          const rjcode = work.id
           deleteCoverImageFromDisk(rjcode)    
             .catch((err) => {
               if (err && err.code !== 'ENOENT') { 
@@ -533,7 +533,7 @@ const performScan = () => {
             duplicate[key].push(addedFolder); // 最后一项为将要添加到数据库中的音声文件夹
 
             //const rjcode = (`000000${key}`).slice(-6); // zero-pad to 6 digits
-            const rjcode = folder.id
+            const rjcode = key
             console.log(` -> [RJ${rjcode}] 存在多个文件夹:`);
             addMainLog({
               level: 'info',
@@ -636,7 +636,7 @@ const updateMetadata = (id, options = {}) => {
   }
 
   //const rjcode = (`000000${id}`).slice(-6); // zero-pad to 6 digits
-  const rjcode = folder.id
+  const rjcode =  id
   addTask(rjcode); // addTask only accepts a string
   return scrapeProcessor() // 抓取该音声的元数据
     .then((metadata) => {
@@ -700,7 +700,7 @@ const refreshWorks = async (query, idColumnName, processor) => {
     const promises = works.map((work) => {
       const workid = work[idColumnName];
       //const rjcode = (`000000${workid}`).slice(-6);
-      const rjcode = folder.id
+      const rjcode = workid
       return processor(workid)
         .then((result) => { // 统计处理结果
           result === 'failed' ? counts['failed'] += 1 : counts['updated'] += 1;
