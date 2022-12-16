@@ -168,7 +168,7 @@ async function* getFolderList(rootFolder, current = '', depth = 0, callback = fu
             // Found a work folder, don't go any deeper.
             console.log(folder)
             console.log(folder.match(/RJ(\d+)/))
-            yield { absolutePath, relativePath, rootFolderName: rootFolder.name, id: parseInt(folder.match(/RJ(\d+)/)[1]) };
+            yield { absolutePath, relativePath, rootFolderName: rootFolder.name, id: folder.match(/RJ(\d+)/)[1] };
           } else if (depth + 1 < config.scannerMaxRecursionDepth) {
             // 若文件夹名称中不含有RJ号，就进入该文件夹内部
             // Found a folder that's not a work folder, go inside if allowed.
