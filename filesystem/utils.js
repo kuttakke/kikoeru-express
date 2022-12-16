@@ -166,8 +166,6 @@ async function* getFolderList(rootFolder, current = '', depth = 0, callback = fu
       if ((await fs.promises.stat(absolutePath)).isDirectory()) { // 检查是否为文件夹
           if (folder.match(/RJ\d+/)) { // 检查文件夹名称中是否含有RJ号
             // Found a work folder, don't go any deeper.
-            console.log(folder)
-            console.log(folder.match(/RJ(\d+)/))
             yield { absolutePath, relativePath, rootFolderName: rootFolder.name, id: folder.match(/RJ(\d+)/)[1] };
           } else if (depth + 1 < config.scannerMaxRecursionDepth) {
             // 若文件夹名称中不含有RJ号，就进入该文件夹内部

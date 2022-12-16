@@ -156,9 +156,10 @@ const uniqueArr = (arr) => {
  * @param {string} tagLanguage 标签语言，'ja-jp', 'zh-tw' or 'zh-cn'，默认'zh-cn'
  */
 const getMetadata = (id, rootFolderName, dir, tagLanguage) => {
-  const rjcode = (`000000${id}`).slice(-6); // zero-pad to 6 digits
-  console.log(rjcode)
-  console.log(id)
+    console.log('folder.id: %s',folder.id)
+    // const rjcode = (`000000${folder.id}`).slice(-6); // zero-pad to 6 digits
+    const rjcode = folder.id
+    onsole.log('rjcode: %s',rjcode)
   console.log(` -> [RJ${rjcode}] 从 DLSite 抓取元数据...`);
   addLogForTask(rjcode, {
     level: 'info',
@@ -301,7 +302,11 @@ const processFolder = (folder) => db.knex('t_work')
   .count()
   .first()
   .then((res) => {
-    const rjcode = (`000000${folder.id}`).slice(-6); // zero-pad to 6 digits
+    console.log('folder.id: %s',folder.id)
+    // const rjcode = (`000000${folder.id}`).slice(-6); // zero-pad to 6 digits
+    const rjcode = folder.id
+    onsole.log('rjcode: %s',rjcode)
+
     const coverTypes = ['main', 'sam', '240x240'];
     const count = res['count(*)'];
     if (count) { // 查询数据库，检查是否已经写入该音声的元数据
