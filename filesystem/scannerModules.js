@@ -240,9 +240,13 @@ const getMetadata = (id, rootFolderName, dir, tagLanguage) => {
 const getCoverImage = (id, types) => {
   //const rjcode = (`000000${id}`).slice(-6); // zero-pad to 6 digits
   const rjcode = id
+  //const id2 = (id % 1000 === 0) ? id : parseInt(id / 1000) * 1000 + 1000;
   const id2 = (id % 1000 === 0) ? id : parseInt(id / 1000) * 1000 + 1000;
+  const id2E = (`${id2}`).slice(-4)
+  const id2S = (`${id}`).slice(0, - 4)
+  const rj2 = (`${id2S}${id2E}`)
   //const rjcode2 = (`000000${id2}`).slice(-6); // zero-pad to 6 digits
-  const rjcode2 = id2
+  const rjcode2 = rj2
   console.log('rjcode2: %s',rjcode2)
   const promises = [];
   types.forEach(type => {
