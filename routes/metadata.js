@@ -16,8 +16,7 @@ router.get('/cover/:id',
   (req, res, next) => {
     if(!isValidRequest(req, res)) return;
 
-    //const rjcode = (`000000${req.params.id}`).slice(-6);
-    const rjcode = req.params.id
+    const rjcode = (`000000${req.params.id}`).slice(-6);
     const type = req.query.type || 'main'; // 'main', 'sam', '240x240', '360x360'
     res.sendFile(path.join(config.coverFolderDir, `RJ${rjcode}_img_${type}.jpg`), (err) => {
       if (err) {

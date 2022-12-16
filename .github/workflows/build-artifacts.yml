@@ -51,6 +51,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - os: ubuntu-18.04
+            node_version: 14
+            architecture: x64
+            pkg_target: node14-linux-x64
+            archive_name_prefix: kikoeru-linux-x64
+
+          - os: macos-11
+            node_version: 14
+            architecture: x64
+            pkg_target: node14-macos-x64
+            archive_name_prefix: kikoeru-darwin-x64
+
           - os: windows-2019
             node_version: 14
             architecture: x64
@@ -212,6 +224,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - os: ubuntu-18.04
+            archive_name_prefix: kikoeru-linux-x64
+
+          - os: macos-11
+            archive_name_prefix: kikoeru-darwin-x64
+          
           - os: windows-2019
             archive_name_prefix: kikoeru-win-x64
 

@@ -8,8 +8,7 @@ const { nameToUUID } = require('./utils');
  * @param {number} id Work id.
  */
 const scrapeWorkMetadataFromHVDB = id => new Promise((resolve, reject) => {
-  //const rjcode = (`000000${id}`).slice(-6);
-  const rjcode = id
+  const rjcode = (`000000${id}`).slice(-6);
   const url = `https://hvdb.me/Dashboard/WorkDetails/${id}`;
 
   console.log(`[RJ${rjcode}] 从 HVDB 抓取元数据...`);
