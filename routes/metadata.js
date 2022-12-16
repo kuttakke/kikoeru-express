@@ -18,7 +18,7 @@ router.get('/cover/:id',
 
     //const rjcode = (`000000${req.params.id}`).slice(-6);
     let rjcode ;
-    if (id>=1000000) {
+    if (req.params.id>=1000000) {
       rjcode = (`00000000${req.params.id}`).slice(-8);
     } else {
       rjcode = (`000000${req.params.id}`).slice(-6);

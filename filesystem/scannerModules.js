@@ -251,7 +251,7 @@ const getCoverImage = (id, types) => {
   const id2 = (id % 1000 === 0) ? id : parseInt(id / 1000) * 1000 + 1000;
   //const rjcode2 = (`000000${id2}`).slice(-6); // zero-pad to 6 digits
   let rjcode2 ;
-  if (id>=1000000) {
+  if (id2>=1000000) {
     rjcode2 = (`00000000${id2}`).slice(-8);
   } else {
     rjcode2 = (`000000${id2}`).slice(-6);
@@ -319,7 +319,7 @@ const processFolder = (folder) => db.knex('t_work')
   .then((res) => {
     //const rjcode = (`000000${folder.id}`).slice(-6); // zero-pad to 6 digits
     let rjcode ;
-    if (id>=1000000) {
+    if (folder.id>=1000000) {
       rjcode = (`00000000${folder.id}`).slice(-8);
     } else {
       rjcode = (`000000${folder.id}`).slice(-6);
@@ -393,7 +393,7 @@ const performCleanup = async () => {
         .then((result) => { // 然后删除其封面图片
           //const rjcode = (`000000${work.id}`).slice(-6); // zero-pad to 6 digits
           let rjcode ;
-          if (id>=1000000) {
+          if (work.id>=1000000) {
             rjcode = (`00000000${work.id}`).slice(-8);
           } else {
             rjcode = (`000000${work.id}`).slice(-6);
@@ -553,7 +553,7 @@ const performScan = () => {
 
             //const rjcode = (`000000${key}`).slice(-6); // zero-pad to 6 digits
             let rjcode ;
-              if (id>=1000000) {
+              if (key>=1000000) {
                rjcode = (`00000000${key}`).slice(-8);
              } else {
                 rjcode = (`000000${key}`).slice(-6);
@@ -584,7 +584,7 @@ const performScan = () => {
             .then((result) => { // 统计处理结果
               //const rjcode = (`000000${folder.id}`).slice(-6); // zero-pad to 6 digits\
               let rjcode ;
-              if (id>=1000000) {
+              if (folder.id>=1000000) {
                 rjcode = (`00000000${folder.id}`).slice(-8);
               } else {
                 rjcode = (`000000${folder.id}`).slice(-6);
@@ -735,7 +735,7 @@ const refreshWorks = async (query, idColumnName, processor) => {
       const workid = work[idColumnName];
       //const rjcode = (`000000${workid}`).slice(-6);
       let rjcode ;
-      if (id>=1000000) {
+      if (workid>=1000000) {
         rjcode = (`00000000${workid}`).slice(-8);
       } else {
         rjcode = (`000000${workid}`).slice(-6);
