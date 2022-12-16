@@ -156,9 +156,9 @@ const uniqueArr = (arr) => {
  * @param {string} tagLanguage 标签语言，'ja-jp', 'zh-tw' or 'zh-cn'，默认'zh-cn'
  */
 const getMetadata = (id, rootFolderName, dir, tagLanguage) => {
-    console.log('folder.id: %s',folder.id)
+    console.log('folder.id: %s', id)
     // const rjcode = (`000000${folder.id}`).slice(-6); // zero-pad to 6 digits
-    const rjcode = folder.id
+    const rjcode = id
     onsole.log('rjcode: %s',rjcode)
   console.log(` -> [RJ${rjcode}] 从 DLSite 抓取元数据...`);
   addLogForTask(rjcode, {
@@ -302,9 +302,9 @@ const processFolder = (folder) => db.knex('t_work')
   .count()
   .first()
   .then((res) => {
-    console.log('folder.id: %s',folder.id)
+    console.log('folder.id: %s',id)
     // const rjcode = (`000000${folder.id}`).slice(-6); // zero-pad to 6 digits
-    const rjcode = folder.id
+    const rjcode = id
     onsole.log('rjcode: %s',rjcode)
 
     const coverTypes = ['main', 'sam', '240x240'];
