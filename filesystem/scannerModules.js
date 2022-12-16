@@ -157,6 +157,8 @@ const uniqueArr = (arr) => {
  */
 const getMetadata = (id, rootFolderName, dir, tagLanguage) => {
   const rjcode = (`000000${id}`).slice(-6); // zero-pad to 6 digits
+  console.log(rjcode)
+  console.log(id)
   console.log(` -> [RJ${rjcode}] 从 DLSite 抓取元数据...`);
   addLogForTask(rjcode, {
     level: 'info',
