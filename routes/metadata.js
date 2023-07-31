@@ -94,7 +94,11 @@ router.get('/works',
     const offset = (currentPage - 1) * PAGE_SIZE;
     const username = config.auth ? req.user.name : 'admin';
     const shuffleSeed = req.query.seed ? req.query.seed : 7;
-    
+
+    // 适配kikoeru-android的`最新收录`排序
+    if (order === 'create_date') {
+      order = 'insert_time';
+    }
     try {
       const query = () => db.getWorksBy({username: username});
       const totalCount = await query().count('id as count');
@@ -113,7 +117,7 @@ router.get('/works',
       }
 
       works = normalize(works);
-    
+
       res.send({
         works,
         pagination: {
@@ -139,7 +143,7 @@ router.get('/:field(circle|tag|va)s/:id',
     return db.getMetadata({field: req.params.field, id: req.params.id})
       .then(item => {
         if (item) {
-          res.send(item) 
+          res.send(item)
         } else {
           const errorMessage= {
             'circle': `社团${req.params.id}不存在`,
@@ -163,7 +167,7 @@ router.get('/search/:keyword?', async (req, res, next) => {
   const offset = (currentPage - 1) * PAGE_SIZE;
   const username = config.auth ? req.user.name : 'admin';
   const shuffleSeed = req.query.seed ? req.query.seed : 7;
-  
+
   try {
     const query = () => db.getWorksByKeyWord({keyword: keyword, username: username});
     const totalCount = await query().count('id as count');
