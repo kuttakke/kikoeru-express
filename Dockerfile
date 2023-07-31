@@ -7,7 +7,7 @@ FROM node:14-alpine as build-dep
 # Create app directory
 WORKDIR /usr/src/kikoeru
 
-RUN apk update && apk add python3 make gcc g++ 
+RUN apk update && apk add python3 make gcc g++
 
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
@@ -27,7 +27,7 @@ ARG FRONTEND_VERSION="history-release"
 # Workaround docker cache
 # https://stackoverflow.com/questions/36996046/how-to-prevent-dockerfile-caching-git-clone
 ADD https://api.github.com/repos/azuse/kikoeru-quasar/git/refs/heads/history-release /tmp/version.json
-RUN git clone -b ${FRONTEND_VERSION} https://github.com/azuse/kikoeru-quasar.git .
+RUN git clone -b ${FRONTEND_VERSION} https://github.com/kuttakke/kikoeru-quasar.git .
 RUN npm ci
 RUN quasar build && quasar build -m pwa
 
