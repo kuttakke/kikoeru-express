@@ -96,7 +96,7 @@ router.get('/works',
     const shuffleSeed = req.query.seed ? req.query.seed : 7;
 
     // 适配kikoeru-android的`最新收录`排序
-    if (order === 'create_date') {
+    if (order === 'create_date' || order === 'created_at') {
       order = 'insert_time';
     }
     try {
