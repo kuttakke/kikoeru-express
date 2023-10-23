@@ -158,27 +158,42 @@ router.get('/:field(circle|tag|va)s/:id',
 
 // eslint-disable-next-line no-unused-vars
 router.get('/search/:keyword?', async (req, res, next) => {
-  const keyword = req.params.keyword ? req.params.keyword.trim() : '';
+  const keyword = req.params.keyword ? req.params.keyword.trim() : "";
   const currentPage = parseInt(req.query.page) || 1;
   // 通过 "音声id, 贩卖日, 用户评价， 售出数, 评论数量, 价格, 平均评价, 全年龄新作" 排序
   // ['id', 'release', 'rating', 'dl_count', 'review_count', 'price', 'rate_average_2dp', 'nsfw']
-  const order = req.query.order || 'release';
-  const sort = req.query.sort || 'desc';
+  let order = req.query.order || "release";
+  const sort = req.query.sort || "desc";
   const offset = (currentPage - 1) * PAGE_SIZE;
-  const username = config.auth ? req.user.name : 'admin';
+  const username = config.auth ? req.user.name : "admin";
   const shuffleSeed = req.query.seed ? req.query.seed : 7;
 
+  // 适配kikoeru-android的`最新收录`排序
+  if (order === "create_date" || order === "created_at") {
+    order = "insert_time";
+  }
+
   try {
-    const query = () => db.getWorksByKeyWord({keyword: keyword, username: username});
-    const totalCount = await query().count('id as count');
+    const query = () =>
+      db.getWorksByKeyWord({ keyword: keyword, username: username });
+    const totalCount = await query().count("id as count");
 
     let works = null;
 
-    if (order === 'random') {
-      works = await query().offset(offset).limit(PAGE_SIZE).orderBy(db.knex.raw('id % ?', shuffleSeed));
+    if (order === "random") {
+      works = await query()
+        .offset(offset)
+        .limit(PAGE_SIZE)
+        .orderBy(db.knex.raw("id % ?", shuffleSeed));
     } else {
-      works = await query().offset(offset).limit(PAGE_SIZE).orderBy(order, sort)
-        .orderBy([{ column: 'release', order: 'desc'}, { column: 'id', order: 'desc' }])
+      works = await query()
+        .offset(offset)
+        .limit(PAGE_SIZE)
+        .orderBy(order, sort)
+        .orderBy([
+          { column: "release", order: "desc" },
+          { column: "id", order: "desc" },
+        ]);
     }
 
     works = normalize(works);
@@ -188,11 +203,11 @@ router.get('/search/:keyword?', async (req, res, next) => {
       pagination: {
         currentPage,
         pageSize: PAGE_SIZE,
-        totalCount: totalCount[0]['count']
-      }
+        totalCount: totalCount[0]["count"],
+      },
     });
-  } catch(err) {
-    res.status(500).send({error: '查询过程中出错'});
+  } catch (err) {
+    res.status(500).send({ error: "查询过程中出错" });
     console.error(err);
     // next(err);
   }
@@ -204,28 +219,47 @@ router.get('/:field(circle|tag|va)s/:id/works',
   // eslint-disable-next-line no-unused-vars
   async (req, res, next) => {
     // In case regex matching goes wrong
-    if(!isValidRequest(req, res)) return;
+    if (!isValidRequest(req, res)) return;
 
     const currentPage = parseInt(req.query.page) || 1;
     // 通过 "音声id, 贩卖日, 用户评价, 售出数, 评论数量, 价格, 平均评价, 全年龄新作" 排序
     // ['id', 'release', 'rating', 'dl_count', 'review_count', 'price', 'rate_average_2dp, 'nsfw']
-    const order = req.query.order || 'release';
-    const sort = req.query.sort || 'desc'; // ['desc', 'asc]
+    let order = req.query.order || "release";
+    const sort = req.query.sort || "desc"; // ['desc', 'asc]
     const offset = (currentPage - 1) * PAGE_SIZE;
-    const username = config.auth ? req.user.name : 'admin';
+    const username = config.auth ? req.user.name : "admin";
     const shuffleSeed = req.query.seed ? req.query.seed : 7;
 
+    // 适配kikoeru-android的`最新收录`排序
+    if (order === "create_date" || order === "created_at") {
+      order = "insert_time";
+    }
+
     try {
-      const query = () => db.getWorksBy({id: req.params.id, field: req.params.field, username: username});
-      const totalCount = await query().count('id as count');
+      const query = () =>
+        db.getWorksBy({
+          id: req.params.id,
+          field: req.params.field,
+          username: username,
+        });
+      const totalCount = await query().count("id as count");
 
       let works = null;
 
-      if (order === 'random') {
-        works = await query().offset(offset).limit(PAGE_SIZE).orderBy(db.knex.raw('id % ?', shuffleSeed));
+      if (order === "random") {
+        works = await query()
+          .offset(offset)
+          .limit(PAGE_SIZE)
+          .orderBy(db.knex.raw("id % ?", shuffleSeed));
       } else {
-        works = await query().offset(offset).limit(PAGE_SIZE).orderBy(order, sort)
-        .orderBy([{ column: 'release', order: 'desc'}, { column: 'id', order: 'desc' }])
+        works = await query()
+          .offset(offset)
+          .limit(PAGE_SIZE)
+          .orderBy(order, sort)
+          .orderBy([
+            { column: "release", order: "desc" },
+            { column: "id", order: "desc" },
+          ]);
       }
 
       works = normalize(works);
@@ -235,15 +269,15 @@ router.get('/:field(circle|tag|va)s/:id/works',
         pagination: {
           currentPage,
           pageSize: PAGE_SIZE,
-          totalCount: totalCount[0]['count']
-        }
+          totalCount: totalCount[0]["count"],
+        },
       });
-    } catch(err) {
-      res.status(500).send({error: '查询过程中出错'});
+    } catch (err) {
+      res.status(500).send({ error: "查询过程中出错" });
       console.error(err);
       // next(err);
     }
-});
+  });
 
 // GET list of circles/tags/VAs
 router.get('/:field(circle|tag|va)s/',
