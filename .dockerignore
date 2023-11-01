@@ -32,6 +32,7 @@ Release-Template.md
 # GitHub
 .github
 
+.vscode
 # Env
 .env
 
