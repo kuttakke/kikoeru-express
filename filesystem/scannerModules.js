@@ -241,69 +241,121 @@ const getMetadata = (id, rootFolderName, dir, tagLanguage) => {
  * @param {Array} types img types: ['main', 'sam', 'sam@2x', 'sam@3x', '240x240', '360x360']
  */
 const getCoverImage = (id, types) => {
-  //const rjcode = (`000000${id}`).slice(-6); // zero-pad to 6 digits
-  let rjcode ;
-  if (id>=1000000) {
-    rjcode = (`00000000${id}`).slice(-8);
-  } else {
-    rjcode = (`000000${id}`).slice(-6);
-  }
-  const id2 = (id % 1000 === 0) ? id : parseInt(id / 1000) * 1000 + 1000;
-  //const rjcode2 = (`000000${id2}`).slice(-6); // zero-pad to 6 digits
-  let rjcode2 ;
-  if (id2>=1000000) {
-    rjcode2 = (`00000000${id2}`).slice(-8);
-  } else {
-    rjcode2 = (`000000${id2}`).slice(-6);
-  }
-  const promises = [];
-  types.forEach(type => {
-    let url = `https://img.dlsite.jp/modpub/images2/work/doujin/RJ${rjcode2}/RJ${rjcode}_img_${type}.jpg`;
-    if (type === '240x240'|| type === '360x360') {
-      url = `https://img.dlsite.jp/resize/images2/work/doujin/RJ${rjcode2}/RJ${rjcode}_img_main_${type}.jpg`;
-    }
-    promises.push(
-      axios.retryGet(url, { responseType: "stream", retry: {} })
-        .then((imageRes) => {
-          return saveCoverImageToDisk(imageRes.data, rjcode, type)
-            .then(() => {
-              console.log(` -> [RJ${rjcode}] 封面 RJ${rjcode}_img_${type}.jpg 下载成功.`);
-              addLogForTask(rjcode, {
-                level: 'info',
-                message: `封面 RJ${rjcode}_img_${type}.jpg 下载成功.`
-              });
-
-              return 'added';
-            });
+  const getRealRjcode = (id) => {
+    return new Promise((resolve, reject) => {
+      let rjcode;
+      if (id >= 1000000) {
+        rjcode = `00000000${id}`.slice(-8);
+      } else {
+        rjcode = `000000${id}`.slice(-6);
+      }
+      const url = `https://www.dlsite.com/maniax-touch/product/info/ajax?product_id=RJ${rjcode}`;
+      axios
+        .retryGet(url, {
+          retry: {},
+        })
+        .then((response) => response.data[`RJ${rjcode}`])
+        .then((data) => {
+          let realRjcode = data.dl_count_items[0].workno; // 'RJXXXX' or Undefined
+          if (realRjcode === undefined) {
+            resolve(parseInt(rjcode));
+          } else {
+            resolve(parseInt(realRjcode.replace("RJ", "")));
+          }
         })
         .catch((err) => {
-          console.error(`  ! [RJ${rjcode}] 在下载封面 RJ${rjcode}_img_${type}.jpg 过程中出错: ${err.message}`);
-          addLogForTask(rjcode, {
-            level: 'error',
-            message: `在下载封面 RJ${rjcode}_img_${type}.jpg 过程中出错: ${err.message}`
-          });
-          
-          return 'failed';
-        })
-    );
+          console.error(
+            `  ! [RJ${rjcode}] 在获取真实 RJcode 过程中出错: ${err.message}`
+          );
+          reject(err);
+        });
+    });
+  };
+
+  let rjcode;
+  if (id >= 1000000) {
+    rjcode = `00000000${id}`.slice(-8);
+  } else {
+    rjcode = `000000${id}`.slice(-6);
+  }
+
+  console.log(` -> [RJ${rjcode}] 获取真实 RJcode...`);
+  addLogForTask(rjcode, {
+    level: "info",
+    message: "获取真实 RJcode...",
   });
 
-  console.log(` -> [RJ${rjcode}] 从 DLsite 下载封面...`);
-  addLogForTask(rjcode, {
-    level: 'info',
-    message: `从 DLsite 下载封面...`
-  });
-  
-  return Promise.all(promises)
-    .then((results) => {
-      results.forEach(result => {
-        if (result === 'failed') {
-          return 'failed';
+  return getRealRjcode(id).then((realRjid) => {
+    const id2 =
+      realRjid % 1000 === 0
+        ? realRjid
+        : parseInt(realRjid / 1000) * 1000 + 1000;
+    //const rjcode2 = (`000000${id2}`).slice(-6); // zero-pad to 6 digits
+    let rjcode2;
+    if (id2 >= 1000000) {
+      rjcode2 = `00000000${id2}`.slice(-8);
+    } else {
+      rjcode2 = `000000${id2}`.slice(-6);
+    }
+    let realRjcode;
+    if (realRjid >= 1000000) {
+      realRjcode = `00000000${realRjid}`.slice(-8);
+    } else {
+      realRjcode = `000000${realRjid}`.slice(-6);
+    }
+
+    const promises = [];
+    types.forEach((type) => {
+      let url = `https://img.dlsite.jp/modpub/images2/work/doujin/RJ${rjcode2}/RJ${realRjcode}_img_${type}.jpg`;
+      if (type === "240x240" || type === "360x360") {
+        url = `https://img.dlsite.jp/resize/images2/work/doujin/RJ${rjcode2}/RJ${realRjcode}_img_main_${type}.jpg`;
+      }
+
+      promises.push(
+        axios
+          .retryGet(url, { responseType: "stream", retry: {} })
+          .then((imageRes) => {
+            return saveCoverImageToDisk(imageRes.data, rjcode, type).then(
+              () => {
+                console.log(
+                  ` -> [RJ${rjcode}] 封面 RJ${rjcode}_img_${type}.jpg 下载成功.`
+                );
+                addLogForTask(rjcode, {
+                  level: "info",
+                  message: `封面 RJ${rjcode}_img_${type}.jpg 下载成功.`,
+                });
+                return "added";
+              }
+            );
+          })
+          .catch((err) => {
+            console.error(
+              `  ! [RJ${rjcode}] 在下载封面 RJ${rjcode}_img_${type}.jpg 过程中出错: ${err.message}`
+            );
+            addLogForTask(rjcode, {
+              level: "error",
+              message: `在下载封面 RJ${rjcode}_img_${type}.jpg 过程中出错: ${err.message}`,
+            });
+            return "failed";
+          })
+      );
+    });
+
+    console.log(` -> [RJ${rjcode}] 从 DLsite 下载封面...`);
+    addLogForTask(rjcode, {
+      level: "info",
+      message: "从 DLsite 下载封面...",
+    });
+
+    return Promise.all(promises).then((results) => {
+      results.forEach((result) => {
+        if (result === "failed") {
+          return "failed";
         }
       });
-
-      return 'added';
+      return "added";
     });
+  });
 };
 
 /**
