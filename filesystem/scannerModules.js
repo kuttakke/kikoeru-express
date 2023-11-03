@@ -273,10 +273,14 @@ const getCoverImage = (id, types) => {
         })
         .then((response) => response.data[`RJ${rjcode}`])
         .then((data) => {
-          if (data === undefined) {
+          if (
+            data === undefined ||
+            data.dl_count_items === undefined ||
+            data.dl_count_items[0] === undefined
+          ) {
             resolve(parseInt(rjcode));
           }
-
+          
           let realRjcode = data.dl_count_items[0].workno; // 'RJXXXX' or Undefined
           if (realRjcode === undefined) {
             resolve(parseInt(rjcode));
